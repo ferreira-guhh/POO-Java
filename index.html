@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia de Estudos — POO em Java</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --border: #2a2a40;
+    --code-bg: #0d1117;
+  }
+ 
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+ 
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a0a2e 50%, #0a1a0f 100%);
+    padding: 60px 40px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(108,99,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(67,233,123,0.1) 0%, transparent 60%);
+  }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    position: relative;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    position: relative;
+  }
+  .badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    position: relative;
+  }
+  .badge {
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.3);
+    color: var(--accent);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+  }
+ 
+  /* Layout */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+ 
+  /* Nav */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin: 40px auto;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 48px;
+  }
+  .toc-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 16px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toc a:hover { color: var(--text); background: var(--surface2); }
+  .toc-num {
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+ 
+  /* Sections */
+  section {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+  }
+ 
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    background: var(--accent);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-num.green { background: var(--accent3); color: #0a0a0f; }
+  .section-num.pink { background: var(--accent2); color: #fff; }
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+ 
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(108,99,255,0.4); }
+  .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-title .icon { font-size: 1.1rem; }
+  .card p, .card li { font-size: 0.92rem; color: var(--muted); line-height: 1.8; }
+  .card ul { padding-left: 20px; }
+  .card li { margin-bottom: 4px; }
+  .card b, .card strong { color: var(--text); }
+ 
+  /* Code */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+    position: relative;
+  }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: #c9d1d9;
+  }
+  .kw { color: #ff7b72; }
+  .ty { color: #79c0ff; }
+  .st { color: #a5d6ff; }
+  .cm { color: #6e7681; font-style: italic; }
+  .nm { color: #d2a8ff; }
+  .nu { color: #79c0ff; }
+ 
+  .code-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+ 
+  /* Divider */
+  .divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 48px auto;
+    max-width: 900px;
+  }
+ 
+  /* Exercise section */
+  .ex-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .ex-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .ex-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 3px 9px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .ex-num.teoria { background: #ff6584; }
+  .ex-num.pratica { background: var(--accent); }
+  .ex-num.uml { background: var(--accent3); color: #0a0a0f; }
+  .ex-num.debug { background: #f0a500; color: #0a0a0f; }
+  .ex-num.multi { background: #e879f9; }
+  .ex-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .ex-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-left: 0;
+  }
+  .ex-tip {
+    background: rgba(108,99,255,0.08);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .ex-tip strong { color: var(--accent); }
+  .ex-code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 14px;
+    overflow-x: auto;
+  }
+  .ex-code code { font-size: 0.78rem; }
+ 
+  /* Tag groups */
+  .tag-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .tag {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.2s;
+  }
+  .tag.t { background: rgba(255,101,132,0.1); color: #ff6584; border-color: rgba(255,101,132,0.3); }
+  .tag.p { background: rgba(108,99,255,0.1); color: var(--accent); border-color: rgba(108,99,255,0.3); }
+  .tag.u { background: rgba(67,233,123,0.1); color: var(--accent3); border-color: rgba(67,233,123,0.3); }
+  .tag.d { background: rgba(240,165,0,0.1); color: #f0a500; border-color: rgba(240,165,0,0.3); }
+  .tag.m { background: rgba(232,121,249,0.1); color: #e879f9; border-color: rgba(232,121,249,0.3); }
+ 
+  /* Highlight box */
+  .highlight {
+    background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(67,233,123,0.05));
+    border: 1px solid rgba(108,99,255,0.25);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .highlight-title {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    font-family: 'Space Mono', monospace;
+    margin-bottom: 12px;
+  }
+ 
+  /* Grid 2 col */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+ 
+  @media (max-width: 640px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .toc-grid { grid-template-columns: 1fr; }
+    .hero { padding: 40px 20px 60px; }
+  }
+ 
+  /* Pilares */
+  .pilar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .pilar {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .pilar-icon { font-size: 2rem; margin-bottom: 10px; }
+  .pilar-name { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .pilar-name.enc { color: #6c63ff; }
+  .pilar-name.her { color: #43e97b; }
+  .pilar-name.pol { color: #ff6584; }
+  .pilar-name.abs { color: #f0a500; }
+  .pilar-desc { font-size: 0.8rem; color: var(--muted); }
+ 
+  @media (max-width: 500px) { .pilar-grid { grid-template-columns: 1fr; } }
+ 
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-family: 'Space Mono', monospace;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+ 
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">UNIP · 2º Ano · Ciências da Computação</div>
+  <h1>Guia de Estudos<br>POO em Java</h1>
+  <p class="hero-sub">Resumo completo das aulas + lista de exercícios para a prova</p>
+  <div class="badges">
+    <span class="badge">Orientação a Objetos</span>
+    <span class="badge">Scanner · Classes · Herança</span>
+    <span class="badge">Exercícios Teóricos e Práticos</span>
+  </div>
+</div>
+ 
+<!-- TOC -->
+<div class="toc container">
+  <div class="toc-title">📋 Índice do Guia</div>
+  <div class="toc-grid">
+    <a href="#s1"><span class="toc-num">01</span> Java Básico: saída e variáveis</a>
+    <a href="#s2"><span class="toc-num">02</span> Entrada de dados (Scanner)</a>
+    <a href="#s3"><span class="toc-num">03</span> Operações matemáticas</a>
+    <a href="#s4"><span class="toc-num">04</span> Condicionais e estruturas de controle</a>
+    <a href="#s5"><span class="toc-num">05</span> Classes e Objetos</a>
+    <a href="#s6"><span class="toc-num">06</span> Construtores, Getters e Setters</a>
+    <a href="#s7"><span class="toc-num">07</span> Herança e super()</a>
+    <a href="#s8"><span class="toc-num">08</span> 4 Pilares da POO</a>
+    <a href="#exercicios"><span class="toc-num">⭐</span> Lista de Exercícios</a>
+  </div>
+</div>
+ 
+<!-- ========================================= SEÇÃO 1 ========================================= -->
+<section id="s1">
+  <div class="section-label">
+    <div class="section-num">01</div>
+    <h2>Java Básico: Saída e Variáveis</h2>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">📤</span> Saída de dados</div>
+    <p>Em Java, usamos <strong>System.out.println()</strong> para imprimir uma linha (com quebra) e <strong>System.out.print()</strong> para imprimir sem quebrar a linha.</p>
+    <div class="code-label">exemplo das aulas</div>
+    <pre><code><span class="kw">public class</span> <span class="ty">OlaMundo</span> {
+    <span class="kw">public static void</span> <span class="nm">main</span>(<span class="ty">String</span>[] args) {
+        System.out.println(<span class="st">"Olá, Mundo!"</span>);   <span class="cm">// imprime e quebra linha</span>
+        System.out.print(<span class="st">"Sem quebra"</span>);       <span class="cm">// não quebra linha</span>
+    }
+}</code></pre>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">📦</span> Tipos de Variáveis</div>
+    <div class="grid2">
+      <div>
+        <strong style="color:var(--text)">Primitivos:</strong>
+        <ul style="margin-top:8px">
+          <li><strong>int</strong> — números inteiros (ex: idade)</li>
+          <li><strong>double</strong> — decimais (ex: salário, medidas)</li>
+          <li><strong>boolean</strong> — true/false</li>
+          <li><strong>char</strong> — um único caractere</li>
+        </ul>
+      </div>
+      <div>
+        <strong style="color:var(--text)">Referência:</strong>
+        <ul style="margin-top:8px">
+          <li><strong>String</strong> — texto (começa com maiúscula!)</li>
+          <li><strong>Arrays</strong> — vetores</li>
+          <li>Objetos de classes criadas</li>
+        </ul>
+      </div>
+    </div>
+    <pre><code><span class="ty">int</span> idade = <span class="nu">20</span>;
+<span class="ty">double</span> salario = <span class="nu">2500.50</span>;
+<span class="ty">String</span> nome = <span class="st">"Ana"</span>;
+<span class="ty">boolean</span> aprovado = <span class="kw">true</span>;</code></pre>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 2 ========================================= -->
+<section id="s2">
+  <div class="section-label">
+    <div class="section-num">02</div>
+    <h2>Entrada de Dados — Scanner</h2>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">⌨️</span> Usando o Scanner</div>
+    <p>O <strong>Scanner</strong> é a classe usada para ler dados do teclado. Vimos isso em várias aulas: Saudacoes2, NomesConjuge, retângulo, círculo etc.</p>
+    <pre><code><span class="kw">import</span> java.util.Scanner; <span class="cm">// SEMPRE importar!</span>
+ 
+<span class="kw">public class</span> <span class="ty">Exemplo</span> {
+    <span class="kw">public static void</span> <span class="nm">main</span>(<span class="ty">String</span>[] args) {
+        Scanner teclado = <span class="kw">new</span> <span class="ty">Scanner</span>(System.in);
+ 
+        System.out.print(<span class="st">"Qual seu nome? "</span>);
+        <span class="ty">String</span> nome = teclado.nextLine();  <span class="cm">// lê texto</span>
+ 
+        System.out.print(<span class="st">"Qual sua idade? "</span>);
+        <span class="ty">int</span> idade = teclado.nextInt();     <span class="cm">// lê inteiro</span>
+ 
+        System.out.print(<span class="st">"Qual seu salário? "</span>);
+        <span class="ty">double</span> sal = teclado.nextDouble(); <span class="cm">// lê decimal</span>
+ 
+        System.out.println(<span class="st">"Olá, "</span> + nome + <span class="st">"!"</span>);
+    }
+}</code></pre>
+    <div class="ex-tip"><strong>⚠️ Atenção:</strong> Use <code>nextLine()</code> para String, <code>nextInt()</code> para inteiros, <code>nextDouble()</code> para decimais. No Brasil o separador decimal pode ser vírgula!</div>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> Padrão visto nas aulas: Nomes + Salários</div>
+    <pre><code><span class="cm">// Padrão visto na aula com leNome() e leSalario()</span>
+<span class="ty">String</span> nome1 = leNome(<span class="st">"Nome 1: "</span>);
+<span class="ty">double</span> salario1 = leSalario(nome1);
+ 
+System.out.println(nome1 + <span class="st">" ganha R$ "</span> + salario1);</code></pre>
+    <p>Métodos auxiliares <strong>estáticos</strong> (static) foram criados para ler nome e salário, deixando o código mais organizado — isso é <strong>modularização</strong>!</p>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 3 ========================================= -->
+<section id="s3">
+  <div class="section-label">
+    <div class="section-num">03</div>
+    <h2>Operações Matemáticas</h2>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">📐</span> Retângulo e Círculo (visto em aula)</div>
+    <pre><code><span class="cm">// Retângulo</span>
+<span class="ty">double</span> lado1 = teclado.nextDouble();
+<span class="ty">double</span> lado2 = teclado.nextDouble();
+<span class="ty">double</span> perimetro = <span class="nu">2</span> * (lado1 + lado2);
+<span class="ty">double</span> area = lado1 * lado2;
+ 
+<span class="cm">// Círculo — Math.PI é uma constante embutida!</span>
+<span class="ty">double</span> raio = circulo.nextDouble();
+<span class="ty">double</span> areaCirculo = Math.PI * (raio * raio);
+<span class="ty">double</span> circunferencia = <span class="nu">2</span> * Math.PI * raio;</code></pre>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <strong style="color:var(--text)">Operadores básicos:</strong>
+        <ul style="margin-top:8px">
+          <li><code>+</code> soma</li>
+          <li><code>-</code> subtração</li>
+          <li><code>*</code> multiplicação</li>
+          <li><code>/</code> divisão</li>
+          <li><code>%</code> resto da divisão</li>
+        </ul>
+      </div>
+      <div>
+        <strong style="color:var(--text)">Classe Math:</strong>
+        <ul style="margin-top:8px">
+          <li><code>Math.PI</code> — π</li>
+          <li><code>Math.sqrt(x)</code> — raiz quadrada</li>
+          <li><code>Math.pow(x, y)</code> — potência</li>
+          <li><code>Math.abs(x)</code> — valor absoluto</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 4 ========================================= -->
+<section id="s4">
+  <div class="section-label">
+    <div class="section-num">04</div>
+    <h2>Condicionais e Estruturas de Controle</h2>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">🔀</span> if / else if / else</div>
+    <pre><code><span class="ty">int</span> nota = <span class="nu">7</span>;
+ 
+<span class="kw">if</span> (nota >= <span class="nu">7</span>) {
+    System.out.println(<span class="st">"Aprovado!"</span>);
+} <span class="kw">else if</span> (nota >= <span class="nu">5</span>) {
+    System.out.println(<span class="st">"Recuperação"</span>);
+} <span class="kw">else</span> {
+    System.out.println(<span class="st">"Reprovado"</span>);
+}</code></pre>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">🔁</span> Laços (visto em aula)</div>
+    <pre><code><span class="cm">// while</span>
+<span class="ty">int</span> i = <span class="nu">0</span>;
+<span class="kw">while</span> (i < <span class="nu">5</span>) {
+    System.out.println(i);
+    i++;
+}
+ 
+<span class="cm">// for</span>
+<span class="kw">for</span> (<span class="ty">int</span> j = <span class="nu">0</span>; j < <span class="nu">5</span>; j++) {
+    System.out.println(j);
+}</code></pre>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 5 ========================================= -->
+<section id="s5">
+  <div class="section-label">
+    <div class="section-num">05</div>
+    <h2>Classes e Objetos</h2>
+  </div>
+ 
+  <div class="highlight">
+    <div class="highlight-title">💡 Conceito Central de POO</div>
+    <p style="font-size:0.9rem;color:var(--muted)">Uma <strong style="color:var(--text)">classe</strong> é o molde/projeto. Um <strong style="color:var(--text)">objeto</strong> é a instância criada a partir desse molde. Assim como uma planta de uma casa (classe) pode gerar várias casas construídas (objetos).</p>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">🎓</span> Classe Aluna — vista em aula (UML + Código)</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px">No quadro vocês viram o diagrama UML e depois o código. Veja a correspondência:</p>
+    <div class="code-label">diagrama UML → código Java</div>
+    <pre><code><span class="cm">// Atributos (campos da classe)</span>
+<span class="kw">public class</span> <span class="ty">Aluna</span> {
+    <span class="kw">private</span> <span class="ty">String</span> ra;
+    <span class="kw">private</span> <span class="ty">String</span> nome;
+    <span class="kw">private</span> <span class="ty">int</span>    idade;
+    <span class="kw">private</span> <span class="ty">String</span> crm;
+    <span class="kw">private</span> <span class="ty">double</span> mensalidade;
+ 
+    <span class="cm">// Construtor</span>
+    <span class="kw">public</span> <span class="nm">Aluna</span>(<span class="ty">String</span> ra, <span class="ty">String</span> nome, <span class="ty">int</span> idade) {
+        <span class="kw">this</span>.ra    = ra;
+        <span class="kw">this</span>.nome  = nome;
+        <span class="kw">this</span>.idade = idade;
+    }
+ 
+    <span class="cm">// Getter</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="nm">getNome</span>() { <span class="kw">return</span> nome; }
+ 
+    <span class="cm">// Setter</span>
+    <span class="kw">public void</span> <span class="nm">setNome</span>(<span class="ty">String</span> nome) { <span class="kw">this</span>.nome = nome; }
+}
+ 
+<span class="cm">// Criando objetos</span>
+<span class="ty">Aluna</span> a1 = <span class="kw">new</span> <span class="ty">Aluna</span>(<span class="st">"001"</span>, <span class="st">"Maria"</span>, <span class="nu">20</span>);
+<span class="ty">Aluna</span> a2 = a1; <span class="cm">// a2 aponta para o MESMO objeto que a1!</span></code></pre>
+    <div class="ex-tip"><strong>⚠️ Cuidado com referências:</strong> No código da aula, <code>Aluna a2 = a1</code> não cria uma cópia — ambas apontam para o mesmo objeto na memória!</div>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 6 ========================================= -->
+<section id="s6">
+  <div class="section-label">
+    <div class="section-num">06</div>
+    <h2>Construtores, Getters e Setters</h2>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗️</span> Encapsulamento com private + getters/setters</div>
+    <p>Atributos são declarados como <strong>private</strong> (encapsulamento). O acesso externo é feito via métodos públicos: <strong>get</strong> (retorna valor) e <strong>set</strong> (altera valor).</p>
+    <pre><code><span class="kw">public class</span> <span class="ty">Pessoa</span> {
+    <span class="kw">private</span> <span class="ty">String</span> nome;  <span class="cm">// privado — não acessível diretamente</span>
+    <span class="kw">private</span> <span class="ty">int</span> idade;
+ 
+    <span class="cm">// Construtor</span>
+    <span class="kw">public</span> <span class="nm">Pessoa</span>(<span class="ty">String</span> nome, <span class="ty">int</span> idade) {
+        <span class="kw">this</span>.nome  = nome;
+        <span class="kw">this</span>.idade = idade;
+    }
+ 
+    <span class="cm">// Getter — retorna o valor</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="nm">getNome</span>()  { <span class="kw">return</span> nome; }
+    <span class="kw">public</span> <span class="ty">int</span>    <span class="nm">getIdade</span>() { <span class="kw">return</span> idade; }
+ 
+    <span class="cm">// Setter — altera o valor</span>
+    <span class="kw">public void</span> <span class="nm">setNome</span>(<span class="ty">String</span> nome)  { <span class="kw">this</span>.nome  = nome; }
+    <span class="kw">public void</span> <span class="nm">setIdade</span>(<span class="ty">int</span> idade)   { <span class="kw">this</span>.idade = idade; }
+}</code></pre>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">🔑</span> A palavra-chave <code>this</code></div>
+    <p><strong>this</strong> referencia o próprio objeto atual. É usado no construtor e setters para diferenciar o atributo da classe do parâmetro do método quando têm o mesmo nome.</p>
+    <pre><code><span class="kw">public void</span> <span class="nm">setNome</span>(<span class="ty">String</span> nome) {
+    <span class="kw">this</span>.nome = nome; <span class="cm">// this.nome = atributo, nome = parâmetro</span>
+}</code></pre>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 7 ========================================= -->
+<section id="s7">
+  <div class="section-label">
+    <div class="section-num">07</div>
+    <h2>Herança e <code>super()</code></h2>
+  </div>
+ 
+  <div class="card">
+    <div class="card-title"><span class="icon">🧬</span> Herança — extends</div>
+    <p>Nas aulas vocês viram a classe <strong>Aluna</strong> herdando de <strong>Pessoa</strong>. A classe filha herda atributos e métodos da classe pai.</p>
+    <pre><code><span class="cm">// Classe pai (superclasse)</span>
+<span class="kw">public class</span> <span class="ty">Pessoa</span> {
+    <span class="kw">private</span> <span class="ty">String</span> nome;
+ 
+    <span class="kw">public</span> <span class="nm">Pessoa</span>(<span class="ty">String</span> nome) {
+        <span class="kw">this</span>.nome = nome;
+    }
+    <span class="kw">public</span> <span class="ty">String</span> <span class="nm">getNome</span>() { <span class="kw">return</span> nome; }
+}
+ 
+<span class="cm">// Classe filha (subclasse) — usa extends</span>
+<span class="kw">public class</span> <span class="ty">Aluna</span> <span class="kw">extends</span> <span class="ty">Pessoa</span> {
+    <span class="kw">private</span> <span class="ty">String</span> ra;
+ 
+    <span class="kw">public</span> <span class="nm">Aluna</span>(<span class="ty">String</span> ra, <span class="ty">String</span> nome) {
+        <span class="kw">super</span>(nome); <span class="cm">// chama o construtor da classe PAI!</span>
+        <span class="kw">this</span>.ra = ra;
+    }
+}
+ 
+<span class="cm">// Uso</span>
+<span class="ty">Aluna</span> a = <span class="kw">new</span> <span class="ty">Aluna</span>(<span class="st">"001"</span>, <span class="st">"Maria"</span>);
+System.out.println(a.getNome()); <span class="cm">// herdado de Pessoa</span></code></pre>
+    <div class="ex-tip"><strong>super()</strong> deve ser a PRIMEIRA instrução no construtor da classe filha. Ele invoca o construtor da superclasse.</div>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= SEÇÃO 8 ========================================= -->
+<section id="s8">
+  <div class="section-label">
+    <div class="section-num">08</div>
+    <h2>Os 4 Pilares da POO</h2>
+  </div>
+ 
+  <div class="pilar-grid">
+    <div class="pilar">
+      <div class="pilar-icon">🔒</div>
+      <div class="pilar-name enc">Encapsulamento</div>
+      <div class="pilar-desc">Esconder atributos com <code>private</code> e acessar via <code>get/set</code>. Protege os dados internos.</div>
+    </div>
+    <div class="pilar">
+      <div class="pilar-icon">🧬</div>
+      <div class="pilar-name her">Herança</div>
+      <div class="pilar-desc">Uma classe filha herda de uma classe pai com <code>extends</code>. Reutiliza código.</div>
+    </div>
+    <div class="pilar">
+      <div class="pilar-icon">🎭</div>
+      <div class="pilar-name pol">Polimorfismo</div>
+      <div class="pilar-desc">Mesmo método com comportamentos diferentes em classes filhas. Sobrescrita com <code>@Override</code>.</div>
+    </div>
+    <div class="pilar">
+      <div class="pilar-icon">📐</div>
+      <div class="pilar-name abs">Abstração</div>
+      <div class="pilar-desc">Modelar o mundo real em classes, expondo apenas o essencial. Classes abstratas e interfaces.</div>
+    </div>
+  </div>
+ 
+  <div class="card" style="margin-top:20px">
+    <div class="card-title"><span class="icon">🎭</span> Polimorfismo — Sobrescrita de Método</div>
+    <pre><code><span class="kw">public class</span> <span class="ty">Pessoa</span> {
+    <span class="kw">public void</span> <span class="nm">apresentar</span>() {
+        System.out.println(<span class="st">"Sou uma pessoa."</span>);
+    }
+}
+ 
+<span class="kw">public class</span> <span class="ty">Aluna</span> <span class="kw">extends</span> <span class="ty">Pessoa</span> {
+    <span class="kw">@Override</span>
+    <span class="kw">public void</span> <span class="nm">apresentar</span>() { <span class="cm">// mesmo método, comportamento diferente</span>
+        System.out.println(<span class="st">"Sou uma aluna!"</span>);
+    }
+}
+ 
+<span class="cm">// Polimorfismo em ação:</span>
+<span class="ty">Pessoa</span> p = <span class="kw">new</span> <span class="ty">Aluna</span>(); <span class="cm">// referência Pessoa, objeto Aluna</span>
+p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></code></pre>
+  </div>
+</section>
+ 
+<hr class="divider">
+ 
+<!-- ========================================= EXERCÍCIOS ========================================= -->
+<section id="exercicios">
+  <div class="section-label">
+    <div class="section-num pink">⭐</div>
+    <h2>Lista de Exercícios — Prova de POO</h2>
+  </div>
+ 
+  <div class="highlight">
+    <div class="highlight-title">📚 Tipos de exercícios nesta lista</div>
+    <div class="tag-group">
+      <span class="tag t">TEORIA</span>
+      <span class="tag p">PRÁTICA (CÓDIGO)</span>
+      <span class="tag u">UML / DIAGRAMA</span>
+      <span class="tag d">DEBUG (ENCONTRE O ERRO)</span>
+      <span class="tag m">MÚLTIPLA ESCOLHA</span>
+    </div>
+    <p style="font-size:0.83rem;color:var(--muted)">Estude todos os tipos! Provas de POO costumam misturar teoria, código, análise e diagramas.</p>
+  </div>
+ 
+  <!-- ============ TEORIA ============ -->
+  <h3 style="color:var(--accent2);font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🔴 Exercícios Teóricos</h3>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num teoria">T-01</span>
+      <div class="ex-title">Defina os 4 pilares da POO com suas próprias palavras e dê um exemplo do mundo real para cada um.</div>
+    </div>
+    <div class="ex-desc">Encapsulamento, Herança, Polimorfismo e Abstração. Explique o que cada pilar representa e como ele aparece no contexto das aulas (ex: a classe Aluna e Pessoa).</div>
+    <div class="ex-tip"><strong>Dica:</strong> Use exemplos concretos — "Encapsulamento é como uma caixa preta: você usa o controle remoto sem saber como a TV funciona por dentro."</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num teoria">T-02</span>
+      <div class="ex-title">Qual a diferença entre uma classe e um objeto? E entre atributo e método?</div>
+    </div>
+    <div class="ex-desc">Explique a relação entre classe (molde) e objeto (instância). Depois diferencie atributo (dado/estado) de método (comportamento/ação).</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num teoria">T-03</span>
+      <div class="ex-title">O que é a palavra-chave <code>this</code> e quando ela é necessária?</div>
+    </div>
+    <div class="ex-desc">Explique o papel do <code>this</code> dentro de construtores e métodos. Em quais situações ele é obrigatório para evitar ambiguidade?</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num teoria">T-04</span>
+      <div class="ex-title">Explique o que é encapsulamento e por que usamos <code>private</code> nos atributos em vez de <code>public</code>.</div>
+    </div>
+    <div class="ex-desc">Cite as vantagens de usar <code>private</code> com getters/setters: controle de acesso, validação, manutenção do código.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num teoria">T-05</span>
+      <div class="ex-title">Qual a diferença entre <code>super()</code> e <code>this()</code> em construtores? Quando cada um é usado?</div>
+    </div>
+    <div class="ex-desc"><code>super()</code> chama o construtor da classe pai. <code>this()</code> chama outro construtor da mesma classe. Ambos devem ser a primeira instrução no construtor.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num teoria">T-06</span>
+      <div class="ex-title">O que é sobrescrita de método (override) e como ela se relaciona com polimorfismo?</div>
+    </div>
+    <div class="ex-desc">Explique o uso de <code>@Override</code> e por que é necessário que o método tenha a mesma assinatura (mesmo nome e parâmetros) na classe filha.</div>
+  </div>
+ 
+  <!-- ============ MÚLTIPLA ESCOLHA ============ -->
+  <h3 style="color:#e879f9;font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🟣 Múltipla Escolha</h3>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num multi">M-01</span>
+      <div class="ex-title">Qual instrução lê uma linha de texto completa com o Scanner?</div>
+    </div>
+    <div class="ex-desc">
+      a) <code>scanner.next()</code><br>
+      b) <code>scanner.nextLine()</code><br>
+      c) <code>scanner.nextString()</code><br>
+      d) <code>scanner.read()</code>
+    </div>
+    <div class="ex-tip"><strong>Resposta:</strong> b) <code>nextLine()</code> — a única que lê a linha inteira, incluindo espaços.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num multi">M-02</span>
+      <div class="ex-title">Dado: <code>Aluna a2 = a1;</code>. O que acontece se você alterar <code>a2.setNome("Joana")</code>?</div>
+    </div>
+    <div class="ex-desc">
+      a) Só o nome de a2 muda<br>
+      b) Só o nome de a1 muda<br>
+      c) Tanto a1 quanto a2 têm o nome alterado para "Joana"<br>
+      d) Ocorre um erro de compilação
+    </div>
+    <div class="ex-tip"><strong>Resposta:</strong> c) — a1 e a2 apontam para o MESMO objeto. Alterar por uma referência altera para as duas.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num multi">M-03</span>
+      <div class="ex-title">Qual é a saída do código abaixo?</div>
+    </div>
+    <div class="ex-code"><code>
+<span class="ty">int</span> x = <span class="nu">10</span>;<br>
+<span class="ty">int</span> y = <span class="nu">3</span>;<br>
+System.out.println(x / y);<br>
+System.out.println(x % y);
+    </code></div>
+    <div class="ex-desc" style="margin-top:12px">
+      a) 3.33 e 1<br>
+      b) 3 e 1<br>
+      c) 3.0 e 1.0<br>
+      d) 4 e 1
+    </div>
+    <div class="ex-tip"><strong>Resposta:</strong> b) — divisão inteira entre dois <code>int</code> trunca o resultado. 10/3 = 3, 10%3 = 1.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num multi">M-04</span>
+      <div class="ex-title">Qual palavra-chave permite que uma classe herde de outra em Java?</div>
+    </div>
+    <div class="ex-desc">
+      a) <code>implements</code><br>
+      b) <code>extends</code><br>
+      c) <code>inherits</code><br>
+      d) <code>super</code>
+    </div>
+    <div class="ex-tip"><strong>Resposta:</strong> b) <code>extends</code></div>
+  </div>
+ 
+  <!-- ============ DEBUG ============ -->
+  <h3 style="color:#f0a500;font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🟡 Debug — Encontre e Corrija o Erro</h3>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num debug">D-01</span>
+      <div class="ex-title">O código abaixo não compila. Encontre e corrija TODOS os erros.</div>
+    </div>
+    <div class="ex-code"><code>
+<span class="cm">// CÓDIGO COM ERROS</span><br>
+public class Carro {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private String modelo<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private int ano;<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;public Carro(String modelo, int ano) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modelo = modelo;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.ano = ano;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;public String getModelo {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return modelo;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}
+    </code></div>
+    <div class="ex-tip"><strong>Erros:</strong> 1) Falta ponto e vírgula após <code>String modelo</code>. 2) <code>modelo = modelo</code> não usa <code>this</code>, então o atributo nunca é atribuído. 3) <code>getModelo</code> está faltando os parênteses <code>()</code>.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num debug">D-02</span>
+      <div class="ex-title">Por que este código de herança não compila?</div>
+    </div>
+    <div class="ex-code"><code>
+public class Animal {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private String nome;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public Animal(String nome) { this.nome = nome; }<br>
+}<br><br>
+public class Cachorro extends Animal {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;private String raca;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public Cachorro(String raca) { <span class="cm">// erro aqui!</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.raca = raca;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}
+    </code></div>
+    <div class="ex-tip"><strong>Resposta:</strong> A classe pai <code>Animal</code> não tem construtor padrão (sem parâmetros). O construtor de <code>Cachorro</code> precisa chamar <code>super(nome)</code> explicitamente como primeira instrução.</div>
+  </div>
+ 
+  <!-- ============ UML ============ -->
+  <h3 style="color:var(--accent3);font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🟢 UML e Diagramas</h3>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num uml">U-01</span>
+      <div class="ex-title">Desenhe o diagrama UML da classe <code>Produto</code> com: nome (String), preco (double), quantidade (int) e os métodos getters/setters + construtor.</div>
+    </div>
+    <div class="ex-desc">O diagrama UML de classe tem 3 partes: nome da classe (topo), atributos (meio, com o tipo), métodos (baixo). Use <code>-</code> para private e <code>+</code> para public.</div>
+    <div class="ex-tip"><strong>Formato:</strong> | - nome : String | e | + getNome() : String |</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num uml">U-02</span>
+      <div class="ex-title">Desenhe o diagrama de herança: <code>Veiculo</code> → <code>Carro</code> e <code>Veiculo</code> → <code>Moto</code></div>
+    </div>
+    <div class="ex-desc">Mostre os atributos comuns em Veiculo (marca, ano) e os específicos de cada subclasse. Use a seta de herança (linha sólida com triângulo vazio apontando para a superclasse).</div>
+  </div>
+ 
+  <!-- ============ PRÁTICA ============ -->
+  <h3 style="color:var(--accent);font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🔵 Exercícios Práticos (Código)</h3>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-01</span>
+      <div class="ex-title">Crie uma classe <code>Retangulo</code> com largura e altura. Implemente métodos para calcular área e perímetro.</div>
+    </div>
+    <div class="ex-desc">A classe deve ter: atributos <code>double largura</code> e <code>double altura</code> (private), construtor, getters/setters, método <code>calcularArea()</code> e <code>calcularPerimetro()</code>. Crie um objeto no <code>main</code> e imprima os resultados.</div>
+    <div class="ex-tip"><strong>Base:</strong> Exatamente o que foi feito em aula com o retângulo usando Scanner. Agora encapsule em uma classe!</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-02</span>
+      <div class="ex-title">Crie as classes <code>ContaBancaria</code> com saldo, método <code>depositar(double valor)</code> e <code>sacar(double valor)</code>.</div>
+    </div>
+    <div class="ex-desc">O método <code>sacar</code> deve verificar se há saldo suficiente. Se não houver, imprimir "Saldo insuficiente!" e não alterar o saldo. Use <code>if/else</code> dentro do método.</div>
+    <div class="ex-tip"><strong>Dica:</strong> O setter de saldo pode ser privado — só os métodos depositar/sacar devem alterar o saldo.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-03</span>
+      <div class="ex-title">Implemente herança: <code>Funcionario</code> (nome, salário) → <code>Gerente</code> (bonus) e <code>Estagiario</code> (bolsa).</div>
+    </div>
+    <div class="ex-desc">Crie a superclasse <code>Funcionario</code> com atributos e método <code>calcularSalarioTotal()</code>. As subclasses herdam e sobrescrevem esse método para incluir bonus ou bolsa no cálculo. Use <code>super()</code> no construtor.</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-04</span>
+      <div class="ex-title">Recrie o programa <code>Saudacoes2</code> da aula, mas agora com uma classe <code>Usuario</code> encapsulada.</div>
+    </div>
+    <div class="ex-desc">Leia nome e idade pelo Scanner, crie um objeto <code>Usuario</code>, e imprima uma saudação usando os getters. Ex: "Olá, Maria! Você tem 20 anos."</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-05</span>
+      <div class="ex-title">Crie um programa que leia dados de 3 alunos (nome + nota) e imprima a média da turma.</div>
+    </div>
+    <div class="ex-desc">Use uma classe <code>Aluno</code> com nome e nota. Crie 3 objetos via Scanner, armazene em variáveis separadas, calcule a média das 3 notas e imprima. Extra: indique se a turma está aprovada (média ≥ 7).</div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-06</span>
+      <div class="ex-title">Implemente polimorfismo: classes <code>Forma</code> (abstrata) e <code>Circulo</code>, <code>Quadrado</code> herdando dela.</div>
+    </div>
+    <div class="ex-desc">Cada forma implementa o método <code>calcularArea()</code> de forma diferente. Crie um array de <code>Forma</code>, armazene objetos de tipos diferentes e calcule as áreas usando polimorfismo.</div>
+    <div class="ex-code"><code>
+Forma[] formas = { new Circulo(5.0), new Quadrado(4.0) };<br>
+for (Forma f : formas) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(f.calcularArea());<br>
+}
+    </code></div>
+  </div>
+ 
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num pratica">P-07</span>
+      <div class="ex-title">[DESAFIO] Crie um sistema de cadastro de alunos com array de 5 posições.</div>
+    </div>
+    <div class="ex-desc">Use um array de objetos <code>Aluna[]</code>. Leia os dados de 5 alunas pelo Scanner, armazene no array e depois imprima todas. Bônus: encontre a aluna com maior mensalidade usando um laço <code>for</code>.</div>
+  </div>
+ 
+  <!-- DICAS FINAIS -->
+  <div class="highlight" style="margin-top:40px">
+    <div class="highlight-title">🎯 Checklist para a Prova</div>
+    <div class="grid2">
+      <ul style="font-size:0.85rem;color:var(--muted);list-style:none;padding:0">
+        <li style="margin-bottom:8px">☑ Sei criar uma classe com atributos private</li>
+        <li style="margin-bottom:8px">☑ Sei criar construtores e usar <code>this</code></li>
+        <li style="margin-bottom:8px">☑ Sei escrever getters e setters</li>
+        <li style="margin-bottom:8px">☑ Sei usar o Scanner para ler dados</li>
+        <li style="margin-bottom:8px">☑ Entendo a diferença entre classe e objeto</li>
+      </ul>
+      <ul style="font-size:0.85rem;color:var(--muted);list-style:none;padding:0">
+        <li style="margin-bottom:8px">☑ Sei usar <code>extends</code> para herança</li>
+        <li style="margin-bottom:8px">☑ Sei usar <code>super()</code> no construtor</li>
+        <li style="margin-bottom:8px">☑ Entendo os 4 pilares da POO</li>
+        <li style="margin-bottom:8px">☑ Sei fazer @Override de métodos</li>
+        <li style="margin-bottom:8px">☑ Sei ler diagramas UML básicos</li>
+      </ul>
+    </div>
+  </div>
+</section>
+ 
+<div class="footer">
+  Guia gerado com base nas fotos das aulas · POO em Java · UNIP 2º ano · 2026
+</div>
+ 
+</body>
+</html>
