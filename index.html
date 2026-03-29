@@ -767,6 +767,190 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
 <hr class="divider">
  
 <!-- ========================================= EXERCÍCIOS ========================================= -->
+<style>
+  /* ---- textarea de resposta ---- */
+  .answer-area {
+    width: 100%;
+    min-height: 110px;
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    padding: 14px 16px;
+    margin-top: 14px;
+    resize: vertical;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .answer-area:focus { border-color: var(--accent); }
+  .answer-area::placeholder { color: #44445a; }
+ 
+  .answer-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    display: block;
+  }
+ 
+  /* ---- múltipla escolha ---- */
+  .mc-options { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .mc-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--muted);
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .mc-opt:hover { border-color: rgba(108,99,255,0.4); color: var(--text); }
+  .mc-opt .opt-letter {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(108,99,255,0.12);
+    border-radius: 6px;
+    padding: 2px 8px;
+    flex-shrink: 0;
+  }
+  .mc-opt.correct {
+    background: rgba(67,233,123,0.08);
+    border-color: rgba(67,233,123,0.5);
+    color: var(--accent3);
+  }
+  .mc-opt.correct .opt-letter { background: rgba(67,233,123,0.2); color: var(--accent3); }
+  .mc-opt.wrong {
+    background: rgba(255,101,132,0.07);
+    border-color: rgba(255,101,132,0.4);
+    color: #ff6584;
+    opacity: 0.7;
+  }
+  .mc-opt.wrong .opt-letter { background: rgba(255,101,132,0.15); color: #ff6584; }
+  .mc-opt.disabled { pointer-events: none; }
+  .mc-verdict {
+    display: none;
+    margin-top: 12px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .mc-verdict.show { display: block; }
+  .mc-verdict.ok { background: rgba(67,233,123,0.08); border: 1px solid rgba(67,233,123,0.3); color: var(--accent3); }
+  .mc-verdict.nok { background: rgba(255,101,132,0.08); border: 1px solid rgba(255,101,132,0.3); color: #ff6584; }
+ 
+  /* ---- code editor (debug) ---- */
+  .code-editor-wrap { margin-top: 14px; position: relative; }
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #161b22;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 8px 14px;
+  }
+  .editor-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+  .editor-label-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 6px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .editor-reset {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .editor-reset:hover { border-color: var(--accent); color: var(--accent); }
+  .code-editor {
+    width: 100%;
+    min-height: 180px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    color: #c9d1d9;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    padding: 16px 18px;
+    resize: vertical;
+    outline: none;
+    tab-size: 4;
+    transition: border-color 0.2s;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .code-editor:focus { border-color: rgba(108,99,255,0.4); }
+ 
+  .debug-reveal-btn {
+    margin-top: 10px;
+    background: rgba(240,165,0,0.1);
+    border: 1px solid rgba(240,165,0,0.3);
+    border-radius: 8px;
+    color: #f0a500;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .debug-reveal-btn:hover { background: rgba(240,165,0,0.18); }
+  .debug-answer {
+    display: none;
+    margin-top: 12px;
+  }
+  .debug-answer.show { display: block; }
+ 
+  /* ---- code editor prática ---- */
+  .practice-editor {
+    width: 100%;
+    min-height: 200px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 0 0 10px 10px;
+    color: #c9d1d9;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.8;
+    padding: 16px 18px;
+    resize: vertical;
+    outline: none;
+    tab-size: 4;
+    transition: border-color 0.2s;
+    white-space: pre;
+  }
+  .practice-editor:focus { border-color: rgba(108,99,255,0.5); }
+  .practice-editor::placeholder { color: #33334a; }
+</style>
+ 
 <section id="exercicios">
   <div class="section-label">
     <div class="section-num pink">⭐</div>
@@ -794,7 +978,9 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
       <div class="ex-title">Defina os 4 pilares da POO com suas próprias palavras e dê um exemplo do mundo real para cada um.</div>
     </div>
     <div class="ex-desc">Encapsulamento, Herança, Polimorfismo e Abstração. Explique o que cada pilar representa e como ele aparece no contexto das aulas (ex: a classe Aluna e Pessoa).</div>
-    <div class="ex-tip"><strong>Dica:</strong> Use exemplos concretos — "Encapsulamento é como uma caixa preta: você usa o controle remoto sem saber como a TV funciona por dentro."</div>
+    <div class="ex-tip"><strong>Dica:</strong> "Encapsulamento é como uma caixa preta: você usa o controle remoto sem saber como a TV funciona por dentro."</div>
+    <span class="answer-label">✏️ Sua resposta</span>
+    <textarea class="answer-area" placeholder="Escreva sua resposta aqui..."></textarea>
   </div>
  
   <div class="ex-card">
@@ -803,6 +989,8 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
       <div class="ex-title">Qual a diferença entre uma classe e um objeto? E entre atributo e método?</div>
     </div>
     <div class="ex-desc">Explique a relação entre classe (molde) e objeto (instância). Depois diferencie atributo (dado/estado) de método (comportamento/ação).</div>
+    <span class="answer-label">✏️ Sua resposta</span>
+    <textarea class="answer-area" placeholder="Escreva sua resposta aqui..."></textarea>
   </div>
  
   <div class="ex-card">
@@ -811,6 +999,8 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
       <div class="ex-title">O que é a palavra-chave <code>this</code> e quando ela é necessária?</div>
     </div>
     <div class="ex-desc">Explique o papel do <code>this</code> dentro de construtores e métodos. Em quais situações ele é obrigatório para evitar ambiguidade?</div>
+    <span class="answer-label">✏️ Sua resposta</span>
+    <textarea class="answer-area" placeholder="Escreva sua resposta aqui..."></textarea>
   </div>
  
   <div class="ex-card">
@@ -819,6 +1009,8 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
       <div class="ex-title">Explique o que é encapsulamento e por que usamos <code>private</code> nos atributos em vez de <code>public</code>.</div>
     </div>
     <div class="ex-desc">Cite as vantagens de usar <code>private</code> com getters/setters: controle de acesso, validação, manutenção do código.</div>
+    <span class="answer-label">✏️ Sua resposta</span>
+    <textarea class="answer-area" placeholder="Escreva sua resposta aqui..."></textarea>
   </div>
  
   <div class="ex-card">
@@ -827,6 +1019,8 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
       <div class="ex-title">Qual a diferença entre <code>super()</code> e <code>this()</code> em construtores? Quando cada um é usado?</div>
     </div>
     <div class="ex-desc"><code>super()</code> chama o construtor da classe pai. <code>this()</code> chama outro construtor da mesma classe. Ambos devem ser a primeira instrução no construtor.</div>
+    <span class="answer-label">✏️ Sua resposta</span>
+    <textarea class="answer-area" placeholder="Escreva sua resposta aqui..."></textarea>
   </div>
  
   <div class="ex-card">
@@ -835,116 +1029,198 @@ p.apresentar();           <span class="cm">// imprime "Sou uma aluna!"</span></c
       <div class="ex-title">O que é sobrescrita de método (override) e como ela se relaciona com polimorfismo?</div>
     </div>
     <div class="ex-desc">Explique o uso de <code>@Override</code> e por que é necessário que o método tenha a mesma assinatura (mesmo nome e parâmetros) na classe filha.</div>
+    <span class="answer-label">✏️ Sua resposta</span>
+    <textarea class="answer-area" placeholder="Escreva sua resposta aqui..."></textarea>
   </div>
  
   <!-- ============ MÚLTIPLA ESCOLHA ============ -->
   <h3 style="color:#e879f9;font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🟣 Múltipla Escolha</h3>
  
+  <!-- M-01 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num multi">M-01</span>
       <div class="ex-title">Qual instrução lê uma linha de texto completa com o Scanner?</div>
     </div>
-    <div class="ex-desc">
-      a) <code>scanner.next()</code><br>
-      b) <code>scanner.nextLine()</code><br>
-      c) <code>scanner.nextString()</code><br>
-      d) <code>scanner.read()</code>
+    <div class="mc-options" data-correct="b" data-explanation="nextLine() lê a linha inteira, incluindo espaços. next() para apenas na próxima palavra. nextString() e read() não existem no Scanner.">
+      <div class="mc-opt" data-val="a"><span class="opt-letter">A</span> <code>scanner.next()</code></div>
+      <div class="mc-opt" data-val="b"><span class="opt-letter">B</span> <code>scanner.nextLine()</code></div>
+      <div class="mc-opt" data-val="c"><span class="opt-letter">C</span> <code>scanner.nextString()</code></div>
+      <div class="mc-opt" data-val="d"><span class="opt-letter">D</span> <code>scanner.read()</code></div>
     </div>
-    <div class="ex-tip"><strong>Resposta:</strong> b) <code>nextLine()</code> — a única que lê a linha inteira, incluindo espaços.</div>
+    <div class="mc-verdict"></div>
   </div>
  
+  <!-- M-02 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num multi">M-02</span>
-      <div class="ex-title">Dado: <code>Aluna a2 = a1;</code>. O que acontece se você alterar <code>a2.setNome("Joana")</code>?</div>
+      <div class="ex-title">Dado: <code>Aluna a2 = a1;</code>. O que acontece ao chamar <code>a2.setNome("Joana")</code>?</div>
     </div>
-    <div class="ex-desc">
-      a) Só o nome de a2 muda<br>
-      b) Só o nome de a1 muda<br>
-      c) Tanto a1 quanto a2 têm o nome alterado para "Joana"<br>
-      d) Ocorre um erro de compilação
+    <div class="mc-options" data-correct="c" data-explanation="a1 e a2 apontam para o MESMO objeto na memória heap. Ao alterar via a2, você está alterando o único objeto existente — então a1.getNome() também retorna 'Joana'.">
+      <div class="mc-opt" data-val="a"><span class="opt-letter">A</span> Só o nome de a2 muda</div>
+      <div class="mc-opt" data-val="b"><span class="opt-letter">B</span> Só o nome de a1 muda</div>
+      <div class="mc-opt" data-val="c"><span class="opt-letter">C</span> Tanto a1 quanto a2 têm o nome alterado para "Joana"</div>
+      <div class="mc-opt" data-val="d"><span class="opt-letter">D</span> Ocorre um erro de compilação</div>
     </div>
-    <div class="ex-tip"><strong>Resposta:</strong> c) — a1 e a2 apontam para o MESMO objeto. Alterar por uma referência altera para as duas.</div>
+    <div class="mc-verdict"></div>
   </div>
  
+  <!-- M-03 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num multi">M-03</span>
       <div class="ex-title">Qual é a saída do código abaixo?</div>
     </div>
-    <div class="ex-code"><code>
-<span class="ty">int</span> x = <span class="nu">10</span>;<br>
-<span class="ty">int</span> y = <span class="nu">3</span>;<br>
-System.out.println(x / y);<br>
-System.out.println(x % y);
-    </code></div>
-    <div class="ex-desc" style="margin-top:12px">
-      a) 3.33 e 1<br>
-      b) 3 e 1<br>
-      c) 3.0 e 1.0<br>
-      d) 4 e 1
+    <div class="ex-code" style="margin-bottom:4px"><code>int x = 10;<br>int y = 3;<br>System.out.println(x / y);<br>System.out.println(x % y);</code></div>
+    <div class="mc-options" data-correct="b" data-explanation="Divisão entre dois int trunca o resultado (sem arredondamento). 10/3 = 3 (não 3.33). O operador % retorna o RESTO da divisão: 10 = 3×3 + 1, portanto o resto é 1.">
+      <div class="mc-opt" data-val="a"><span class="opt-letter">A</span> 3.33 e 1</div>
+      <div class="mc-opt" data-val="b"><span class="opt-letter">B</span> 3 e 1</div>
+      <div class="mc-opt" data-val="c"><span class="opt-letter">C</span> 3.0 e 1.0</div>
+      <div class="mc-opt" data-val="d"><span class="opt-letter">D</span> 4 e 1</div>
     </div>
-    <div class="ex-tip"><strong>Resposta:</strong> b) — divisão inteira entre dois <code>int</code> trunca o resultado. 10/3 = 3, 10%3 = 1.</div>
+    <div class="mc-verdict"></div>
   </div>
  
+  <!-- M-04 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num multi">M-04</span>
       <div class="ex-title">Qual palavra-chave permite que uma classe herde de outra em Java?</div>
     </div>
-    <div class="ex-desc">
-      a) <code>implements</code><br>
-      b) <code>extends</code><br>
-      c) <code>inherits</code><br>
-      d) <code>super</code>
+    <div class="mc-options" data-correct="b" data-explanation="extends é usada para herança de classes. implements é para interfaces. inherits não existe em Java. super é uma referência à superclasse, não a palavra para declarar herança.">
+      <div class="mc-opt" data-val="a"><span class="opt-letter">A</span> <code>implements</code></div>
+      <div class="mc-opt" data-val="b"><span class="opt-letter">B</span> <code>extends</code></div>
+      <div class="mc-opt" data-val="c"><span class="opt-letter">C</span> <code>inherits</code></div>
+      <div class="mc-opt" data-val="d"><span class="opt-letter">D</span> <code>super</code></div>
     </div>
-    <div class="ex-tip"><strong>Resposta:</strong> b) <code>extends</code></div>
+    <div class="mc-verdict"></div>
+  </div>
+ 
+  <!-- M-05 -->
+  <div class="ex-card">
+    <div class="ex-header">
+      <span class="ex-num multi">M-05</span>
+      <div class="ex-title">O que a anotação <code>@Override</code> faz em Java?</div>
+    </div>
+    <div class="mc-options" data-correct="c" data-explanation="@Override avisa o compilador que o método está sobrescrevendo um da superclasse. Se o nome ou os parâmetros estiverem errados, o compilador gera um erro — é uma proteção contra bugs de digitação.">
+      <div class="mc-opt" data-val="a"><span class="opt-letter">A</span> Torna o método acessível de qualquer classe</div>
+      <div class="mc-opt" data-val="b"><span class="opt-letter">B</span> Impede que o método seja sobrescrito nas subclasses</div>
+      <div class="mc-opt" data-val="c"><span class="opt-letter">C</span> Informa ao compilador que o método sobrescreve um da superclasse</div>
+      <div class="mc-opt" data-val="d"><span class="opt-letter">D</span> Cria uma nova versão do método sem herança</div>
+    </div>
+    <div class="mc-verdict"></div>
   </div>
  
   <!-- ============ DEBUG ============ -->
   <h3 style="color:#f0a500;font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🟡 Debug — Encontre e Corrija o Erro</h3>
  
+  <!-- D-01 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num debug">D-01</span>
-      <div class="ex-title">O código abaixo não compila. Encontre e corrija TODOS os erros.</div>
+      <div class="ex-title">O código abaixo não compila. Encontre e corrija TODOS os erros diretamente no editor.</div>
     </div>
-    <div class="ex-code"><code>
-<span class="cm">// CÓDIGO COM ERROS</span><br>
-public class Carro {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;private String modelo<br>
-&nbsp;&nbsp;&nbsp;&nbsp;private int ano;<br><br>
-&nbsp;&nbsp;&nbsp;&nbsp;public Carro(String modelo, int ano) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;modelo = modelo;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.ano = ano;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;}<br><br>
-&nbsp;&nbsp;&nbsp;&nbsp;public String getModelo {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return modelo;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-}
-    </code></div>
-    <div class="ex-tip"><strong>Erros:</strong> 1) Falta ponto e vírgula após <code>String modelo</code>. 2) <code>modelo = modelo</code> não usa <code>this</code>, então o atributo nunca é atribuído. 3) <code>getModelo</code> está faltando os parênteses <code>()</code>.</div>
+    <div class="ex-desc" style="margin-bottom:4px">Há <strong style="color:var(--text)">3 erros</strong> escondidos. Edite o código e depois clique em "Ver gabarito" para conferir.</div>
+    <div class="code-editor-wrap">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">Carro.java — com erros</span>
+        <button class="editor-reset" data-target="d01editor" data-original="public class Carro {
+    private String modelo  // ERRO 1: falta ponto e vírgula
+    private int ano;
+ 
+    public Carro(String modelo, int ano) {
+        modelo = modelo;   // ERRO 2: falta 'this.'
+        this.ano = ano;
+    }
+ 
+    public String getModelo {  // ERRO 3: falta ()
+        return modelo;
+    }
+}">↺ Resetar</button>
+      </div>
+      <textarea id="d01editor" class="code-editor" spellcheck="false">public class Carro {
+    private String modelo  // ERRO 1: falta ponto e vírgula
+    private int ano;
+ 
+    public Carro(String modelo, int ano) {
+        modelo = modelo;   // ERRO 2: falta 'this.'
+        this.ano = ano;
+    }
+ 
+    public String getModelo {  // ERRO 3: falta ()
+        return modelo;
+    }
+}</textarea>
+    </div>
+    <button class="debug-reveal-btn" data-target="d01answer">🔍 Ver gabarito</button>
+    <div id="d01answer" class="debug-answer">
+      <div class="ex-tip" style="border-color:var(--accent3);background:rgba(67,233,123,0.06)">
+        <strong style="color:var(--accent3)">✅ Gabarito — 3 erros:</strong><br><br>
+        <strong>Erro 1:</strong> <code>private String modelo</code> → falta <code>;</code> no final.<br>
+        <strong>Erro 2:</strong> <code>modelo = modelo</code> → deve ser <code><strong>this.</strong>modelo = modelo</code> para atribuir ao atributo da classe.<br>
+        <strong>Erro 3:</strong> <code>public String getModelo {</code> → deve ser <code>public String getModelo<strong>()</strong> {</code> — parênteses obrigatórios em métodos.
+      </div>
+    </div>
   </div>
  
+  <!-- D-02 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num debug">D-02</span>
-      <div class="ex-title">Por que este código de herança não compila?</div>
+      <div class="ex-title">Por que este código de herança não compila? Corrija no editor.</div>
     </div>
-    <div class="ex-code"><code>
-public class Animal {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;private String nome;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;public Animal(String nome) { this.nome = nome; }<br>
-}<br><br>
-public class Cachorro extends Animal {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;private String raca;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;public Cachorro(String raca) { <span class="cm">// erro aqui!</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.raca = raca;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+    <div class="ex-desc" style="margin-bottom:4px">A classe <code>Cachorro</code> herda de <code>Animal</code>, mas algo está faltando no construtor. Encontre e corrija.</div>
+    <div class="code-editor-wrap">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">Animal.java + Cachorro.java — com erro</span>
+        <button class="editor-reset" data-target="d02editor" data-original="public class Animal {
+    private String nome;
+    public Animal(String nome) {
+        this.nome = nome;
+    }
 }
-    </code></div>
-    <div class="ex-tip"><strong>Resposta:</strong> A classe pai <code>Animal</code> não tem construtor padrão (sem parâmetros). O construtor de <code>Cachorro</code> precisa chamar <code>super(nome)</code> explicitamente como primeira instrução.</div>
+ 
+public class Cachorro extends Animal {
+    private String raca;
+ 
+    // ERRO: falta chamar o construtor da classe pai!
+    public Cachorro(String raca) {
+        this.raca = raca;
+    }
+}">↺ Resetar</button>
+      </div>
+      <textarea id="d02editor" class="code-editor" spellcheck="false">public class Animal {
+    private String nome;
+    public Animal(String nome) {
+        this.nome = nome;
+    }
+}
+ 
+public class Cachorro extends Animal {
+    private String raca;
+ 
+    // ERRO: falta chamar o construtor da classe pai!
+    public Cachorro(String raca) {
+        this.raca = raca;
+    }
+}</textarea>
+    </div>
+    <button class="debug-reveal-btn" data-target="d02answer">🔍 Ver gabarito</button>
+    <div id="d02answer" class="debug-answer">
+      <div class="ex-tip" style="border-color:var(--accent3);background:rgba(67,233,123,0.06)">
+        <strong style="color:var(--accent3)">✅ Gabarito:</strong><br><br>
+        <code>Animal</code> não possui construtor padrão (sem parâmetros). O compilador tenta chamar <code>super()</code> automaticamente — mas ele não existe.<br><br>
+        <strong>Correção:</strong> adicionar <code>super(nome)</code> como primeira linha do construtor de <code>Cachorro</code>, e receber o nome como parâmetro também:<br><br>
+        <code>public Cachorro(String nome, String raca) {<br>&nbsp;&nbsp;&nbsp;&nbsp;super(nome); // ← obrigatório e deve ser a 1ª linha<br>&nbsp;&nbsp;&nbsp;&nbsp;this.raca = raca;<br>}</code>
+      </div>
+    </div>
   </div>
  
   <!-- ============ UML ============ -->
@@ -953,88 +1229,419 @@ public class Cachorro extends Animal {<br>
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num uml">U-01</span>
-      <div class="ex-title">Desenhe o diagrama UML da classe <code>Produto</code> com: nome (String), preco (double), quantidade (int) e os métodos getters/setters + construtor.</div>
+      <div class="ex-title">Represente o diagrama UML da classe <code>Produto</code> com: nome (String), preco (double), quantidade (int) e os métodos getters/setters + construtor.</div>
     </div>
-    <div class="ex-desc">O diagrama UML de classe tem 3 partes: nome da classe (topo), atributos (meio, com o tipo), métodos (baixo). Use <code>-</code> para private e <code>+</code> para public.</div>
-    <div class="ex-tip"><strong>Formato:</strong> | - nome : String | e | + getNome() : String |</div>
+    <div class="ex-desc">Use o formato de texto do diagrama UML: <code>-</code> para private e <code>+</code> para public. Separe atributos e métodos com uma linha <code>---</code>.</div>
+    <div class="ex-tip"><strong>Formato esperado:</strong><br><code>| Produto |<br>| - nome : String |<br>| - preco : double |<br>---<br>| + getNome() : String |<br>| + setNome(nome: String) : void |</code></div>
+    <span class="answer-label">✏️ Seu diagrama</span>
+    <textarea class="answer-area" style="font-family:'Space Mono',monospace;font-size:0.8rem;min-height:140px" placeholder="| Produto |&#10;| - nome : String |&#10;| ...           |&#10;---&#10;| + getNome() : String |&#10;| ...                  |"></textarea>
   </div>
  
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num uml">U-02</span>
-      <div class="ex-title">Desenhe o diagrama de herança: <code>Veiculo</code> → <code>Carro</code> e <code>Veiculo</code> → <code>Moto</code></div>
+      <div class="ex-title">Represente o diagrama de herança: <code>Veiculo</code> como superclasse, e <code>Carro</code> e <code>Moto</code> como subclasses.</div>
     </div>
-    <div class="ex-desc">Mostre os atributos comuns em Veiculo (marca, ano) e os específicos de cada subclasse. Use a seta de herança (linha sólida com triângulo vazio apontando para a superclasse).</div>
+    <div class="ex-desc">Mostre os atributos comuns em Veiculo (marca, ano) e os específicos de cada subclasse. Indique a relação de herança com uma seta ou <code>extends</code> no texto.</div>
+    <span class="answer-label">✏️ Seu diagrama</span>
+    <textarea class="answer-area" style="font-family:'Space Mono',monospace;font-size:0.8rem;min-height:160px" placeholder="| Veiculo |&#10;| - marca : String |&#10;| - ano : int |&#10;---&#10;| + getMarca() : String |&#10;&#10;       ↑ extends         ↑ extends&#10;&#10;| Carro |            | Moto |&#10;| - qtdPortas: int | | - cilindrada: int |"></textarea>
   </div>
  
   <!-- ============ PRÁTICA ============ -->
   <h3 style="color:var(--accent);font-size:1rem;letter-spacing:2px;text-transform:uppercase;margin:30px 0 16px;font-family:'Space Mono',monospace">🔵 Exercícios Práticos (Código)</h3>
  
+  <!-- P-01 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-01</span>
       <div class="ex-title">Crie uma classe <code>Retangulo</code> com largura e altura. Implemente métodos para calcular área e perímetro.</div>
     </div>
-    <div class="ex-desc">A classe deve ter: atributos <code>double largura</code> e <code>double altura</code> (private), construtor, getters/setters, método <code>calcularArea()</code> e <code>calcularPerimetro()</code>. Crie um objeto no <code>main</code> e imprima os resultados.</div>
+    <div class="ex-desc">Atributos <code>double largura</code> e <code>double altura</code> (private), construtor, getters/setters, método <code>calcularArea()</code> e <code>calcularPerimetro()</code>. Crie um objeto no <code>main</code> e imprima os resultados.</div>
     <div class="ex-tip"><strong>Base:</strong> Exatamente o que foi feito em aula com o retângulo usando Scanner. Agora encapsule em uma classe!</div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">Retangulo.java</span>
+        <button class="editor-reset" data-target="p01editor" data-original="public class Retangulo {
+    // TODO: declare os atributos private aqui
+ 
+    // TODO: crie o construtor
+ 
+    // TODO: crie os getters e setters
+ 
+    // TODO: método calcularArea()
+ 
+    // TODO: método calcularPerimetro()
+ 
+    public static void main(String[] args) {
+        // TODO: crie um objeto Retangulo e imprima área e perímetro
+    }
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p01editor" class="practice-editor" spellcheck="false">public class Retangulo {
+    // TODO: declare os atributos private aqui
+ 
+    // TODO: crie o construtor
+ 
+    // TODO: crie os getters e setters
+ 
+    // TODO: método calcularArea()
+ 
+    // TODO: método calcularPerimetro()
+ 
+    public static void main(String[] args) {
+        // TODO: crie um objeto Retangulo e imprima área e perímetro
+    }
+}</textarea>
+    </div>
   </div>
  
+  <!-- P-02 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-02</span>
-      <div class="ex-title">Crie as classes <code>ContaBancaria</code> com saldo, método <code>depositar(double valor)</code> e <code>sacar(double valor)</code>.</div>
+      <div class="ex-title">Crie a classe <code>ContaBancaria</code> com saldo, método <code>depositar(double valor)</code> e <code>sacar(double valor)</code>.</div>
     </div>
     <div class="ex-desc">O método <code>sacar</code> deve verificar se há saldo suficiente. Se não houver, imprimir "Saldo insuficiente!" e não alterar o saldo. Use <code>if/else</code> dentro do método.</div>
     <div class="ex-tip"><strong>Dica:</strong> O setter de saldo pode ser privado — só os métodos depositar/sacar devem alterar o saldo.</div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">ContaBancaria.java</span>
+        <button class="editor-reset" data-target="p02editor" data-original="public class ContaBancaria {
+    // TODO: atributo saldo (private double)
+ 
+    // TODO: construtor com saldo inicial
+ 
+    // TODO: método depositar(double valor)
+ 
+    // TODO: método sacar(double valor) com verificação de saldo
+ 
+    // TODO: getter do saldo
+ 
+    public static void main(String[] args) {
+        // Teste sua conta aqui
+    }
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p02editor" class="practice-editor" spellcheck="false">public class ContaBancaria {
+    // TODO: atributo saldo (private double)
+ 
+    // TODO: construtor com saldo inicial
+ 
+    // TODO: método depositar(double valor)
+ 
+    // TODO: método sacar(double valor) com verificação de saldo
+ 
+    // TODO: getter do saldo
+ 
+    public static void main(String[] args) {
+        // Teste sua conta aqui
+    }
+}</textarea>
+    </div>
   </div>
  
+  <!-- P-03 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-03</span>
       <div class="ex-title">Implemente herança: <code>Funcionario</code> (nome, salário) → <code>Gerente</code> (bonus) e <code>Estagiario</code> (bolsa).</div>
     </div>
-    <div class="ex-desc">Crie a superclasse <code>Funcionario</code> com atributos e método <code>calcularSalarioTotal()</code>. As subclasses herdam e sobrescrevem esse método para incluir bonus ou bolsa no cálculo. Use <code>super()</code> no construtor.</div>
+    <div class="ex-desc">Crie a superclasse <code>Funcionario</code> com o método <code>calcularSalarioTotal()</code>. As subclasses sobrescrevem esse método com <code>@Override</code> para incluir bonus ou bolsa. Use <code>super()</code> no construtor.</div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">Funcionario.java</span>
+        <button class="editor-reset" data-target="p03editor" data-original="public class Funcionario {
+    // TODO: atributos nome e salario
+ 
+    // TODO: construtor
+ 
+    // TODO: método calcularSalarioTotal() — retorna apenas o salario base
+}
+ 
+class Gerente extends Funcionario {
+    // TODO: atributo bonus
+ 
+    // TODO: construtor chamando super()
+ 
+    // TODO: @Override de calcularSalarioTotal() — retorna salario + bonus
+}
+ 
+class Estagiario extends Funcionario {
+    // TODO: atributo bolsa
+ 
+    // TODO: construtor chamando super()
+ 
+    // TODO: @Override de calcularSalarioTotal() — retorna apenas a bolsa
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p03editor" class="practice-editor" spellcheck="false">public class Funcionario {
+    // TODO: atributos nome e salario
+ 
+    // TODO: construtor
+ 
+    // TODO: método calcularSalarioTotal() — retorna apenas o salario base
+}
+ 
+class Gerente extends Funcionario {
+    // TODO: atributo bonus
+ 
+    // TODO: construtor chamando super()
+ 
+    // TODO: @Override de calcularSalarioTotal() — retorna salario + bonus
+}
+ 
+class Estagiario extends Funcionario {
+    // TODO: atributo bolsa
+ 
+    // TODO: construtor chamando super()
+ 
+    // TODO: @Override de calcularSalarioTotal() — retorna apenas a bolsa
+}</textarea>
+    </div>
   </div>
  
+  <!-- P-04 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-04</span>
       <div class="ex-title">Recrie o programa <code>Saudacoes2</code> da aula, mas agora com uma classe <code>Usuario</code> encapsulada.</div>
     </div>
-    <div class="ex-desc">Leia nome e idade pelo Scanner, crie um objeto <code>Usuario</code>, e imprima uma saudação usando os getters. Ex: "Olá, Maria! Você tem 20 anos."</div>
+    <div class="ex-desc">Leia nome e idade pelo Scanner, crie um objeto <code>Usuario</code>, e imprima uma saudação usando os getters. Ex: <em>"Olá, Maria! Você tem 20 anos."</em></div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">Saudacoes2.java</span>
+        <button class="editor-reset" data-target="p04editor" data-original="import java.util.Scanner;
+ 
+class Usuario {
+    // TODO: atributos nome (String) e idade (int)
+ 
+    // TODO: construtor
+ 
+    // TODO: getters
+}
+ 
+public class Saudacoes2 {
+    public static void main(String[] args) {
+        Scanner teclado = new Scanner(System.in);
+ 
+        // TODO: leia nome e idade do teclado
+ 
+        // TODO: crie um objeto Usuario
+ 
+        // TODO: imprima a saudação usando os getters
+    }
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p04editor" class="practice-editor" spellcheck="false">import java.util.Scanner;
+ 
+class Usuario {
+    // TODO: atributos nome (String) e idade (int)
+ 
+    // TODO: construtor
+ 
+    // TODO: getters
+}
+ 
+public class Saudacoes2 {
+    public static void main(String[] args) {
+        Scanner teclado = new Scanner(System.in);
+ 
+        // TODO: leia nome e idade do teclado
+ 
+        // TODO: crie um objeto Usuario
+ 
+        // TODO: imprima a saudação usando os getters
+    }
+}</textarea>
+    </div>
   </div>
  
+  <!-- P-05 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-05</span>
       <div class="ex-title">Crie um programa que leia dados de 3 alunos (nome + nota) e imprima a média da turma.</div>
     </div>
-    <div class="ex-desc">Use uma classe <code>Aluno</code> com nome e nota. Crie 3 objetos via Scanner, armazene em variáveis separadas, calcule a média das 3 notas e imprima. Extra: indique se a turma está aprovada (média ≥ 7).</div>
+    <div class="ex-desc">Use uma classe <code>Aluno</code> com nome e nota. Crie 3 objetos via Scanner. Calcule a média das 3 notas e imprima. Extra: indique se a turma está aprovada (média ≥ 7).</div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">MediaTurma.java</span>
+        <button class="editor-reset" data-target="p05editor" data-original="import java.util.Scanner;
+ 
+class Aluno {
+    // TODO: atributos nome e nota
+}
+ 
+public class MediaTurma {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+ 
+        // TODO: crie 3 objetos Aluno lendo do teclado
+ 
+        // TODO: calcule a média das 3 notas
+ 
+        // TODO: imprima os nomes, notas e a média
+ 
+        // EXTRA: imprima se a turma está aprovada ou não
+    }
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p05editor" class="practice-editor" spellcheck="false">import java.util.Scanner;
+ 
+class Aluno {
+    // TODO: atributos nome e nota
+}
+ 
+public class MediaTurma {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+ 
+        // TODO: crie 3 objetos Aluno lendo do teclado
+ 
+        // TODO: calcule a média das 3 notas
+ 
+        // TODO: imprima os nomes, notas e a média
+ 
+        // EXTRA: imprima se a turma está aprovada ou não
+    }
+}</textarea>
+    </div>
   </div>
  
+  <!-- P-06 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-06</span>
-      <div class="ex-title">Implemente polimorfismo: classes <code>Forma</code> (abstrata) e <code>Circulo</code>, <code>Quadrado</code> herdando dela.</div>
+      <div class="ex-title">Implemente polimorfismo: classe <code>Forma</code> com subclasses <code>Circulo</code> e <code>Quadrado</code>.</div>
     </div>
-    <div class="ex-desc">Cada forma implementa o método <code>calcularArea()</code> de forma diferente. Crie um array de <code>Forma</code>, armazene objetos de tipos diferentes e calcule as áreas usando polimorfismo.</div>
-    <div class="ex-code"><code>
-Forma[] formas = { new Circulo(5.0), new Quadrado(4.0) };<br>
-for (Forma f : formas) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(f.calcularArea());<br>
+    <div class="ex-desc">Cada forma implementa <code>calcularArea()</code> diferente. Crie um array de <code>Forma</code>, insira os dois tipos e calcule as áreas em um laço <code>for</code>.</div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">Polimorfismo.java</span>
+        <button class="editor-reset" data-target="p06editor" data-original="public class Forma {
+    // TODO: método calcularArea() que retorna 0.0 (será sobrescrito)
 }
-    </code></div>
+ 
+class Circulo extends Forma {
+    // TODO: atributo raio
+    // TODO: @Override calcularArea() usando Math.PI * raio * raio
+}
+ 
+class Quadrado extends Forma {
+    // TODO: atributo lado
+    // TODO: @Override calcularArea() usando lado * lado
+}
+ 
+class Polimorfismo {
+    public static void main(String[] args) {
+        Forma[] formas = { new Circulo(5.0), new Quadrado(4.0) };
+ 
+        for (Forma f : formas) {
+            System.out.println(f.calcularArea());
+        }
+    }
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p06editor" class="practice-editor" spellcheck="false">public class Forma {
+    // TODO: método calcularArea() que retorna 0.0 (será sobrescrito)
+}
+ 
+class Circulo extends Forma {
+    // TODO: atributo raio
+    // TODO: @Override calcularArea() usando Math.PI * raio * raio
+}
+ 
+class Quadrado extends Forma {
+    // TODO: atributo lado
+    // TODO: @Override calcularArea() usando lado * lado
+}
+ 
+class Polimorfismo {
+    public static void main(String[] args) {
+        Forma[] formas = { new Circulo(5.0), new Quadrado(4.0) };
+ 
+        for (Forma f : formas) {
+            System.out.println(f.calcularArea());
+        }
+    }
+}</textarea>
+    </div>
   </div>
  
+  <!-- P-07 -->
   <div class="ex-card">
     <div class="ex-header">
       <span class="ex-num pratica">P-07</span>
       <div class="ex-title">[DESAFIO] Crie um sistema de cadastro de alunos com array de 5 posições.</div>
     </div>
     <div class="ex-desc">Use um array de objetos <code>Aluna[]</code>. Leia os dados de 5 alunas pelo Scanner, armazene no array e depois imprima todas. Bônus: encontre a aluna com maior mensalidade usando um laço <code>for</code>.</div>
+    <div class="code-editor-wrap" style="margin-top:14px">
+      <div class="editor-toolbar">
+        <div class="editor-dot dot-red"></div>
+        <div class="editor-dot dot-yellow"></div>
+        <div class="editor-dot dot-green"></div>
+        <span class="editor-label-text">CadastroAlunas.java — DESAFIO</span>
+        <button class="editor-reset" data-target="p07editor" data-original="import java.util.Scanner;
+ 
+class Aluna {
+    // TODO: atributos ra, nome, mensalidade
+    // TODO: construtor e getters
+}
+ 
+public class CadastroAlunas {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Aluna[] alunas = new Aluna[5];
+ 
+        // TODO: loop para ler os dados das 5 alunas e armazenar no array
+ 
+        // TODO: loop para imprimir todas as alunas
+ 
+        // BONUS: encontre a aluna com maior mensalidade
+    }
+}">↺ Limpar</button>
+      </div>
+      <textarea id="p07editor" class="practice-editor" style="min-height:240px" spellcheck="false">import java.util.Scanner;
+ 
+class Aluna {
+    // TODO: atributos ra, nome, mensalidade
+    // TODO: construtor e getters
+}
+ 
+public class CadastroAlunas {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Aluna[] alunas = new Aluna[5];
+ 
+        // TODO: loop para ler os dados das 5 alunas e armazenar no array
+ 
+        // TODO: loop para imprimir todas as alunas
+ 
+        // BONUS: encontre a aluna com maior mensalidade
+    }
+}</textarea>
+    </div>
   </div>
  
-  <!-- DICAS FINAIS -->
+  <!-- CHECKLIST -->
   <div class="highlight" style="margin-top:40px">
     <div class="highlight-title">🎯 Checklist para a Prova</div>
     <div class="grid2">
@@ -1059,6 +1666,70 @@ for (Forma f : formas) {<br>
 <div class="footer">
   Guia gerado com base nas fotos das aulas · POO em Java · UNIP 2º ano · 2026
 </div>
+ 
+<script>
+// ---- MÚLTIPLA ESCOLHA ----
+document.querySelectorAll('.mc-options').forEach(function(group) {
+  var correct = group.dataset.correct;
+  var explanation = group.dataset.explanation;
+  var verdict = group.nextElementSibling;
+ 
+  group.querySelectorAll('.mc-opt').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      if (group.classList.contains('answered')) return;
+      group.classList.add('answered');
+ 
+      var chosen = opt.dataset.val;
+      group.querySelectorAll('.mc-opt').forEach(function(o) {
+        o.classList.add('disabled');
+        if (o.dataset.val === correct) o.classList.add('correct');
+        else if (o.dataset.val === chosen && chosen !== correct) o.classList.add('wrong');
+      });
+ 
+      verdict.classList.add('show');
+      if (chosen === correct) {
+        verdict.classList.add('ok');
+        verdict.innerHTML = '✅ <strong>Correto!</strong> ' + explanation;
+      } else {
+        verdict.classList.add('nok');
+        verdict.innerHTML = '❌ <strong>Incorreto.</strong> A resposta certa é a alternativa <strong>' + correct.toUpperCase() + '</strong>. ' + explanation;
+      }
+    });
+  });
+});
+ 
+// ---- DEBUG GABARITO ----
+document.querySelectorAll('.debug-reveal-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var target = document.getElementById(btn.dataset.target);
+    if (target) {
+      target.classList.toggle('show');
+      btn.textContent = target.classList.contains('show') ? '🙈 Ocultar gabarito' : '🔍 Ver gabarito';
+    }
+  });
+});
+ 
+// ---- RESET EDITORS ----
+document.querySelectorAll('.editor-reset').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var editor = document.getElementById(btn.dataset.target);
+    if (editor) editor.value = btn.dataset.original;
+  });
+});
+ 
+// ---- TAB no editor ----
+document.querySelectorAll('.code-editor, .practice-editor').forEach(function(editor) {
+  editor.addEventListener('keydown', function(e) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      var start = this.selectionStart;
+      var end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 4;
+    }
+  });
+});
+</script>
  
 </body>
 </html>
